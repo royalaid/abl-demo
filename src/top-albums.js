@@ -10,7 +10,8 @@ const fetchTopAlbums = (function() {
           "label": "http://www.apple.com/itunes/"
         }
       },
-      "entry": [{
+      "entry": [
+        {
         "im:name": {
           "label": "Descendants 3 (Original TV Movie Soundtrack)"
         },
