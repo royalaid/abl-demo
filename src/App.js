@@ -7,15 +7,16 @@ import _ from "lodash";
 
 function AlbumCard({album}){
   console.log(album)
-  let width = "300px"
+  let width = "250px"
   return(
-    <div className="bg-black-10pa4" style={{width}}>
+    <div className="bg-black-10 pa3 ma2 br3" style={{width}}>
+      <img src={_.last(album?.["im:image"])?.label}/>
       <div className="b">
         {album?.["im:artist"]?.label}
       </div>
-      <div>
+      <p>
         {album?.["im:name"]?.label}
-      </div>
+      </p>
     </div>
   )
 }
@@ -30,19 +31,13 @@ function App() {
   let entry = albums?.feed?.entry;
   return (
       <div className="App">
-        <header className="">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-              className="App-link"
-              href="https://reactjs.org"
-              target="_blank"
-              rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
+        <header className="bg-green flex">
+          <div className="pa3 mr-auto">
+            <b>Top Albums</b>
+          </div>
+          <div className="pa3 ml-auto">
+            Top Albums | Favorite Albums
+          </div>
         </header>
         <div className="flex flex-wrap justify-around">
           {_.map(entry, x =>
