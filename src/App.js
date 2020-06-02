@@ -26,10 +26,24 @@ const selectedAlbumSlice = createSlice({
   }
 })
 
+const favoritedAlbumsSlice = createSlice({
+  name: 'favoritedAlbums',
+  initialState: {},
+  reducers: {
+    add: (state, action) => {
+      state[action?.payload?.id?.attributes?.["im:id"]] = (action?.payload)
+    },
+    remove: (state, action) => {
+      delete state[action?.payload?.id?.attributes?.["im:id"]]
+    },
+  }
+})
+
 const store = configureStore({
   reducer: combineReducers({
     rootFilter: favoriteOrAllSlice.reducer,
-    currentAlbum: selectedAlbumSlice.reducer
+    currentAlbum: selectedAlbumSlice.reducer,
+    favs: favoritedAlbumsSlice.reducer,
   })
 })
 
@@ -37,8 +51,17 @@ const store = configureStore({
 
 function AlbumInfoFold() {
   const album = useSelector(x => x?.currentAlbum)
-  const { actions, reducer } = selectedAlbumSlice
-  const { select } = actions
+  const albumId = album?.id?.attributes?.["im:id"];
+
+  const {actions: selActions } = selectedAlbumSlice
+  const { select } = selActions
+
+  const { actions: favActions } = favoritedAlbumsSlice
+  const { add, remove } = favActions
+  const isFaved = useSelector(x => !!x?.favs[albumId])
+
+  console.log({isFaved})
+
   let rows = [
     {label: "Album Name", value: album?.["im:name"]?.label},
     {label: "Artist", value: album?.["im:artist"]?.label},
@@ -64,7 +87,9 @@ function AlbumInfoFold() {
             )}
           </table>
           <div className="pa1">{album?.rights?.label}</div>
-          <button className="center">Add to Favorites</button>
+          <button onClick={() => store.dispatch(isFaved ? remove(album) : add(album))}
+            className="center">{isFaved ? "Remove from" : "Add to"}  Favorites
+          </button>
         </div>
         <div className={"ml-auto pa4"}>
           <button onClick={() => store.dispatch(select(null))}>Close</button>
