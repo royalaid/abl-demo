@@ -127,11 +127,17 @@ function AlbumCard({album}){
   const { actions, reducer } = selectedAlbumSlice
   const { select } = actions
   const selectedAlbum = useSelector(x => x?.currentAlbum)
+  const albumId = album?.id?.attributes?.["im:id"];
+
+  const { actions: favActions } = favoritedAlbumsSlice
+  const isFaved = useSelector(x => !!x?.favs[albumId])
+
   let width = "250px"
   let bgColor = "bg-black-10"
   if (album === selectedAlbum){
     bgColor = "bg-lightest-blue"
   }
+
   return(
     <div className={bgColor + " pa3 ma2 br3"} style={{width}}
     onClick={() => store.dispatch(select(album))}>
@@ -142,8 +148,22 @@ function AlbumCard({album}){
       <p>
         {album?.["im:name"]?.label}
       </p>
+      {isFaved ? <span>⭐</span>: <span>&nbsp;</span>}
     </div>
   )
+}
+
+function AlbumGrid({albums}) {
+  const albumFilter = useSelector(x => x?.rootFilter)
+  const favs = useSelector(x => _.values(x?.favs));
+  const albumsView = albumFilter === "Favorite" ? favs : albums
+
+  return(
+    <div className="flex flex-wrap justify-around" style={{"padding-top": "3rem"}}>
+      {_.map(albumsView, x =>
+        <AlbumCard album={x} key={x?.attributes?.["im:id"]}/>
+      )}
+    </div>)
 }
 
 function App() {
@@ -161,11 +181,7 @@ function App() {
           <TopNav/>
           <AlbumInfoFold album={_.first(entry)}/>
         </div>
-        <div className="flex flex-wrap justify-around" style={{"padding-top": "3rem"}}>
-          {_.map(entry, x =>
-            <AlbumCard album={x} key={x?.attributes?.["im:id"]}/>
-          )}
-        </div>
+        <AlbumGrid albums={entry}/>
       </div>
     </Provider>
   );
