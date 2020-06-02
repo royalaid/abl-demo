@@ -132,14 +132,14 @@ function App() {
   return (
     <Provider store={store}>
       <div className="App">
-        <div>
+        <div className={"fixed w-100"}>
           <TopNav/>
           <AlbumInfoFold album={_.first(entry)}/>
-          <div className="flex flex-wrap justify-around">
-            {_.map(entry, x =>
-              <AlbumCard album={x} key={x?.attributes?.["im:id"]}/>
-            )}
-          </div>
+        </div>
+        <div className="flex flex-wrap justify-around" style={{"padding-top": "3rem"}}>
+          {_.map(entry, x =>
+            <AlbumCard album={x} key={x?.attributes?.["im:id"]}/>
+          )}
         </div>
       </div>
     </Provider>
