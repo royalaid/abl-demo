@@ -4,9 +4,12 @@ import './App.css';
 import fetchTopAlbums from "./top-albums";
 import { useState, useEffect } from 'react';
 import _ from "lodash";
-import { configureStore, createSlice } from '@reduxjs/toolkit'
-import {Provider, useSelector} from 'react-redux'
-import {combineReducers} from 'redux'
+import { configureStore, createSlice } from '@reduxjs/toolkit';
+import {Provider, useSelector} from 'react-redux';
+import {combineReducers} from 'redux';
+import { persistStore, persistReducer } from 'redux-persist';
+import { PersistGate } from 'redux-persist/integration/react';
+import storage from 'redux-persist/lib/storage';
 
 
 const favoriteOrAllSlice = createSlice({
@@ -39,14 +42,25 @@ const favoritedAlbumsSlice = createSlice({
   }
 })
 
-const store = configureStore({
-  reducer: combineReducers({
-    rootFilter: favoriteOrAllSlice.reducer,
-    currentAlbum: selectedAlbumSlice.reducer,
-    favs: favoritedAlbumsSlice.reducer,
-  })
+const rootReducer = combineReducers({
+  rootFilter: favoriteOrAllSlice.reducer,
+  currentAlbum: selectedAlbumSlice.reducer,
+  favs: favoritedAlbumsSlice.reducer,
 })
 
+const persistConfig = {
+  key: 'favs',
+  storage: storage,
+  whitelist: ['favs'] // which reducer want to store
+};
+
+const pReducer = persistReducer(persistConfig, rootReducer);
+
+const store = configureStore({
+  reducer: pReducer
+})
+
+const persistor = persistStore(store)
 
 
 function AlbumInfoFold() {
@@ -176,6 +190,7 @@ function App() {
   let entry = albums?.feed?.entry;
   return (
     <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
       <div className="App">
         <div className={"fixed w-100"}>
           <TopNav/>
@@ -183,6 +198,7 @@ function App() {
         </div>
         <AlbumGrid albums={entry}/>
       </div>
+        </PersistGate>
     </Provider>
   );
 }
