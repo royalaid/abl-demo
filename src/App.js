@@ -1,5 +1,4 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import fetchTopAlbums from "./top-albums";
 import { useState, useEffect } from 'react';
@@ -16,8 +15,8 @@ const favoriteOrAllSlice = createSlice({
   name: 'favoriteOrAll',
   initialState: "All",
   reducers: {
-    favorite: state => "Favorite",
-    all: state =>  "All"
+    favorite: () => "Favorite",
+    all: () =>  "All"
   }
 })
 
@@ -88,7 +87,7 @@ function AlbumInfoFold() {
   } else {
     return (
       <div className="bg-light-green flex br4 br--bottom">
-        <img className="pa3" src={_.last(album?.["im:image"])?.label}/>
+        <img alt="Cover" className="pa3" src={_.last(album?.["im:image"])?.label}/>
         <div className="tl">
           <table>
             {_.map(rows,
@@ -115,7 +114,7 @@ function AlbumInfoFold() {
 }
 
 function TopNav() {
-  const { actions, reducer } = favoriteOrAllSlice
+  const { actions} = favoriteOrAllSlice
   const { favorite, all} = actions
   const albumFilter = useSelector(x => x?.rootFilter)
 
@@ -124,26 +123,25 @@ function TopNav() {
       <div className="pa3 mr-auto">
         <b>Top Albums</b>
       </div>
-      <div className="pa3 ml-auto">
-        <a className={albumFilter === "All" ? "b" : "p" }
+      <div className="pa3 ml-auto flex">
+        <div className={albumFilter === "All" ? "b" : "p" }
            onClick={() => store.dispatch(all())}>
           Top Albums
-        </a>
-        <span> | </span>
-        <a className={albumFilter === "Favorite" ? "b" : "p" }
+        </div>
+        <span> &nbsp; | &nbsp; </span>
+        <div className={albumFilter === "Favorite" ? "b" : "p" }
            onClick={() => store.dispatch(favorite())}>
           Favorite Albums
-        </a>
+        </div>
       </div>
     </header>)
 }
 function AlbumCard({album}){
-  const { actions, reducer } = selectedAlbumSlice
+  const { actions} = selectedAlbumSlice
   const { select } = actions
   const selectedAlbum = useSelector(x => x?.currentAlbum)
   const albumId = album?.id?.attributes?.["im:id"];
 
-  const { actions: favActions } = favoritedAlbumsSlice
   const isFaved = useSelector(x => !!x?.favs[albumId])
 
   let width = "250px"
@@ -155,14 +153,14 @@ function AlbumCard({album}){
   return(
     <div className={bgColor + " pa3 ma2 br3"} style={{width}}
     onClick={() => store.dispatch(select(album))}>
-      <img src={_.last(album?.["im:image"])?.label}/>
+      <img alt="Cover" src={_.last(album?.["im:image"])?.label}/>
       <div className="b">
         {album?.["im:artist"]?.label}
       </div>
       <p>
         {album?.["im:name"]?.label}
       </p>
-      {isFaved ? <span>⭐</span>: <span>&nbsp;</span>}
+      {isFaved ? <span role="img" aria-label="Favorite Star">⭐</span>: <span>&nbsp;</span>}
     </div>
   )
 }
