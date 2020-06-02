@@ -19,7 +19,7 @@ const favoriteOrAllSlice = createSlice({
 })
 
 const selectedAlbumSlice = createSlice({
-  name: 'favoriteOrAll',
+  name: 'selectedAlbum',
   initialState: null,
   reducers: {
     select: (state, action) => action?.payload,
