@@ -5,6 +5,21 @@ import fetchTopAlbums from "./top-albums";
 import { useState, useEffect } from 'react';
 import _ from "lodash";
 
+function AlbumCard({album}){
+  console.log(album)
+  let width = "300px"
+  return(
+    <div className="bg-black-10pa4" style={{width}}>
+      <div className="b">
+        {album?.["im:artist"]?.label}
+      </div>
+      <div>
+        {album?.["im:name"]?.label}
+      </div>
+    </div>
+  )
+}
+
 function App() {
   const [albums, setAlbums] = useState({})
   useEffect(() =>{
@@ -13,7 +28,6 @@ function App() {
     })();})
 
   let entry = albums?.feed?.entry;
-  console.log(entry)
   return (
       <div className="App">
         <header className="">
@@ -30,10 +44,11 @@ function App() {
             Learn React
           </a>
         </header>
-        {_.map(entry, x =>
-          <div key={x}>
-            {x?.["im:name"]?.label}
-          </div>)}
+        <div className="flex flex-wrap justify-around">
+          {_.map(entry, x =>
+            <AlbumCard album={x} key={x?.attributes?.["im:id"]}/>
+          )}
+        </div>
       </div>
   );
 }
